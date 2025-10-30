@@ -111,13 +111,14 @@ gcloud compute forwarding-rules create grpc-ilb-gke-forwarding-rule \
 # in my case, it's 10.128.0.81
 
 # update the backend service to implement session affinity based on header_field
+# NOTE - this doesn't work because the consistent hash header value i can't find a way to configure using gcloud - had to use GUI but there's a field in the REST guide for it
 gcloud compute backend-services update grpc-ilb-gke-backend-service \
     --project e2m-private-test-01 \
     --region=us-central1 \
     --session-affinity=HEADER_FIELD \
-    --custom-request-header="User-Session:" \
+    --consistent-hash-http-header-name=User-Session \
     --locality-lb-policy=MAGLEV \
-    --consistent-hash-http-header-name="User-Session" 
+     
 
 # dump config of lb
 gcloud compute backend-services describe grpc-ilb-gke-backend-service \
