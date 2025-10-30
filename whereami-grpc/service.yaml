@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: whereami-grpc
+  name: whereami-grpc
+  namespace: grpc-header
+  annotations:
+    cloud.google.com/neg: '{"exposed_ports": {"9090":{"name": "grpc-header"}}}'
+spec:
+  ports:
+  - port: 9090
+    protocol: TCP
+    targetPort: 9090
+    name: grpc # adding for Istio
+    appProtocol: kubernetes.io/h2c # using HTT2 cleartext over TCP
+  selector:
+    app: whereami-grpc
+  type: ClusterIP
