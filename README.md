@@ -110,5 +110,25 @@ gcloud compute forwarding-rules create grpc-ilb-gke-forwarding-rule \
 # capture the VIP
 # in my case, it's 10.128.0.81
 
+# update the backend service to implement session affinity based on header_field
+gcloud compute backend-services update grpc-ilb-gke-backend-service \
+    --project e2m-private-test-01 \
+    --region=us-central1 \
+    --session-affinity=HEADER_FIELD \
+    --custom-request-header="User-Session:" \
+    --locality-lb-policy=MAGLEV \
+    --consistent-hash-http-header-name="User-Session" 
+
+# dump config of lb
+gcloud compute backend-services describe grpc-ilb-gke-backend-service \
+    --project=e2m-private-test-01 \
+    --region=us-central1
+
+gcloud compute backend-services update grpc-ilb-gke-backend-service \
+    --project e2m-private-test-01 \
+    --region=us-central1 \
+    --locality-lb-policy=MAGLEV
+
+### argh had to just update in GUI to get this to work
 
 ```
